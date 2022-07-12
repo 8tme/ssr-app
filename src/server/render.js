@@ -2,9 +2,19 @@ import ReactDom from 'react-dom/server'
 import React from 'react'
 import getScripts from './getScripts'
 import App from './App'
+import store from '../store'
+import { routerConfig } from '../routes/config'
 
-export default (req, res) => {
+export default async (req, res) => {
   const str = ReactDom.renderToString(<App path={req.path} />)
+
+  const route = routerConfig.find((route) => route.path === req.path)
+  const comp = route && route.comp
+  if (comp && comp.loadData) {
+    console.log('fetch first server')
+    await comp.loadData(store, { text: '测试字符串' })
+  }
+  const initialState = JSON.stringify(store.getState())
 
   const html = `
     <!DOCTYPE html>
@@ -17,6 +27,9 @@ export default (req, res) => {
       </head>
       <body>
         <div id="root">${str}</div>
+        <script>
+          window.__initialState = ${initialState}
+        </script>
         ${getScripts()}
       </body>
     </html>

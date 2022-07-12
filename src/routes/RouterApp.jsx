@@ -6,7 +6,7 @@ import Home from '../pages/home'
 import List from '../pages/List'
 import NotFound from '../pages/NotFound'
 
-const Routerapp = () => {
+const Routerapp = (props) => {
   return (
     <>
       <Link to="/ad">广告</Link>
